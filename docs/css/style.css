@@ -1,0 +1,122 @@
+@charset "UTF-8";
+
+body {
+	font-family: 'Roboto', sans-serif;
+  background-color: #EEE;
+  color: #212121;
+	margin: 0;
+}
+
+nav.navigation {
+	position: fixed;
+	top: 0; left: 0; bottom: 0;
+	width: 300px;
+	background-color: #282B30;
+	color: #FAFAFA;
+	overflow-y: auto;
+  z-index: 998;
+	-webkit-transition: width 0.3s ease;
+	transition: width 0.3s ease;
+}
+
+nav.navigation > header {
+	left: 0; top: 0; right: 0;
+	width: 100%;
+	height: 50px;
+  background-color: #3F51B5;
+}
+nav.navigation > header > h1 {
+	line-height: 50px;
+	margin: 0 10px;
+  overflow: hidden;
+	text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+nav.navigation > ul {
+	list-style-type: none;
+	color: #E0E0E0;
+	margin: 0; padding: 0;
+}
+nav.navigation > ul > li.navigation-link {
+	display: block;
+	cursor: pointer;
+	border-bottom: 1px solid #282828;
+	padding: 10px 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+nav.navigation > ul > li.navigation-link > i.material-icons {
+	vertical-align: bottom;
+}
+nav.navigation > ul > li.navigation-link.active, nav.navigation > ul > li.navigation-link:hover, nav.navigation > ul > li.navigation-link:active {
+	background-color: #2E3136;
+}
+
+div#content-container {
+	position: absolute;
+	top: 0; left: 300px; right: 0;
+	box-sizing: border-box;
+	-webkit-transition: left 0.3s ease;
+	transition: left 0.3s ease;
+}
+
+section {
+  background-color: #FAFAFA;
+	padding: 10px 20px;
+	margin: 10px;
+	box-shadow: 0 0 10px 0px rgba(0,0,0,0.2);
+}
+
+section > h1.section-title {
+	font-size: 2em;
+	font-weight: 300;
+	margin: 5px 0;
+}
+
+section > h2 {
+	font-size: 1.4em;
+	font-weight: 300;
+	margin: 0;
+}
+
+section > p {
+	text-indent: 15px;
+	font-size: 1em;
+}
+
+div.loader {
+	border: 5px solid #F3F3F3;
+	border-top: 5px solid #555;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	-webkit-animation: spin 1s linear infinite;
+	width: 50px;
+	height: 50px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+div.progress-bar {
+  position: relative;
+  left: 0; top: 0; right: 0;
+  height: 2px;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.5s, opacity 0.5s linear;
+	z-index: 998;
+}
+div.progress-bar.visible {
+  visibility: visible;
+  opacity: 1;
+}
+div.progress-bar > div.progress-bar-cursor {
+  height: inherit;
+	width: 0;
+  transition: width 0.5s linear;
+  background-color: #009688;
+}

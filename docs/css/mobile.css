@@ -1,0 +1,19 @@
+@media screen and (max-width: 1024px)
+{
+  *.optional-text {
+    display: none;
+  }
+  nav.navigation > header {
+    
+  }
+  nav.navigation {
+    width: 50px;
+  }
+  nav.navigation > ul > li.navigation-link {
+    text-align: center;
+    padding: 5px;
+  }
+  div#content-container {
+    left: 50px;
+  }
+}
