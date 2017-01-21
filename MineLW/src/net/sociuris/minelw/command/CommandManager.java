@@ -2,19 +2,24 @@ package net.sociuris.minelw.command;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sociuris.logger.Logger;
 import net.sociuris.minelw.command.exception.CommandException;
 import net.sociuris.minelw.command.exception.SyntaxErrorException;
-import net.sociuris.minelw.registry.RegistryNamespaced;
 import net.sociuris.minelw.server.MinecraftServer;
 import net.sociuris.minelw.text.TextComponentTranslation;
-import net.sociuris.minelw.translation.DefaultTranslation;
+import net.sociuris.minelw.translation.MinecraftTranslation;
 
-public class CommandManager extends RegistryNamespaced<Command> {
+public class CommandManager {
 
+	private final Logger logger = Logger.getLogger();
 	private final MinecraftServer minecraftServer;
+
+	private final Map<String, Command> commands = new HashMap<String, Command>();
 
 	public CommandManager(MinecraftServer server) {
 		logger.debug("Load command manager...");
@@ -22,14 +27,13 @@ public class CommandManager extends RegistryNamespaced<Command> {
 	}
 
 	public void registerCommand(Command command) {
-		String commandName = command.getName();
-		super.register(commandName, command);
+		this.commands.put(command.getName(), command);
 		for (String commandAlias : command.getAliases())
-			super.register(commandAlias, command);
+			this.commands.put(commandAlias, command);
 	}
-	
+
 	public Command getCommand(String commandName) {
-		return super.getValue(commandName);
+		return commands.get(commandName);
 	}
 
 	/**
@@ -63,13 +67,15 @@ public class CommandManager extends RegistryNamespaced<Command> {
 							: commandException.getTranslationKey());
 					commandSender.sendError(new TextComponentTranslation(translationKey).toArray());
 				} catch (Throwable throwable) {
-					commandSender.sendError(DefaultTranslation.COMMANDS_GENERIC_EXCEPTION.getTranslationComponent(args).toArray());
+					commandSender.sendError(
+							MinecraftTranslation.COMMANDS_GENERIC_EXCEPTION.getTranslationComponent(args).toArray());
 					throwable.initCause(new CommandException("Couldn't process command: " + rawCommand));
 					logger.printStackTrace(throwable);
 				}
 			} else
-				commandSender.sendError(new TextComponentTranslation((boolean) command.getProperties(CommandProperties.SECRET)
-						? "commands.generic.notFound" : "commands.generic.permission").toArray());
+				commandSender.sendError(
+						new TextComponentTranslation((boolean) command.getProperties(CommandProperties.SECRET)
+								? "commands.generic.notFound" : "commands.generic.permission").toArray());
 		} else
 			commandSender.sendError(new TextComponentTranslation("commands.generic.notFound").toArray());
 		return false;
@@ -85,14 +91,15 @@ public class CommandManager extends RegistryNamespaced<Command> {
 
 		List<String> commandList = new ArrayList<String>();
 		if (args.length == 0) {
-			for (Entry<String, Command> entry : super.entrySet()) {
+			for (Entry<String, Command> entry : this.commands.entrySet()) {
 				String commandName = entry.getValue().getName();
-				if (entry.getKey().startsWith(rawCommand) && commandSender.hasPermission("command." + entry.getKey() + ".use")
+				if (entry.getKey().startsWith(rawCommand)
+						&& commandSender.hasPermission("command." + entry.getKey() + ".use")
 						&& !commandList.contains("/" + commandName))
 					commandList.add("/" + commandName);
 			}
 		} else if (args.length > 0) {
-			Command command = getValue(name);
+			Command command = getCommand(name);
 			if (command != null) {
 				for (String commandName : command.getTabCompletionOptions(minecraftServer, commandSender, args))
 					commandList.add(commandName);
@@ -101,7 +108,7 @@ public class CommandManager extends RegistryNamespaced<Command> {
 		return commandList;
 	}
 
-	public MinecraftServer getMinecraftServer() {
+	public MinecraftServer getServer() {
 		return minecraftServer;
 	}
 
