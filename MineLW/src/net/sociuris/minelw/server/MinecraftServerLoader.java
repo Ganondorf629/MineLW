@@ -1,9 +1,10 @@
 package net.sociuris.minelw.server;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 import net.sociuris.crash.CrashReport;
 import net.sociuris.logger.Logger;
@@ -12,29 +13,30 @@ import net.sociuris.util.NumberUtils;
 public class MinecraftServerLoader {
 
 	private final static Logger LOGGER = Logger.getLogger();
+	private static File workingDirectory = new File(System.getProperty("user.dir", "."));
 
 	public static void main(String[] args) {
 		Thread.currentThread().setName("Main");
 
 		LOGGER.info("Starting Minecraft server...");
 
-		String workingDirPath = System.getProperty("user.dir", ".");
 		String serverPropertiesFile = "server.properties";
 		boolean acceptEula = false;
 
 		// server properties arguments
-		String ipAddress = "0.0.0.0";
+		String ipAddress = null;
 		int port = -1;
-		Boolean onlineMode = null;
+		//Boolean onlineMode = null;
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i].toLowerCase();
 			if (arg.startsWith("--") && arg.length() > 2) {
 				arg = arg.substring(2);
 				String value = null;
-				boolean hasValue = (args.length > i);
-				if (hasValue)
-					value = args[i++];
+				boolean hasValue = (args.length > i++);
+				if (hasValue) {
+					value = args[i];
+				}
 
 				switch (arg) {
 				case "debug":
@@ -42,7 +44,7 @@ public class MinecraftServerLoader {
 					break;
 				case "working-dir":
 					if (hasValue)
-						workingDirPath = value;
+						workingDirectory = new File(value);
 					break;
 				case "server-properties":
 					if (hasValue)
@@ -65,33 +67,31 @@ public class MinecraftServerLoader {
 							port = unverifiedPort;
 					}
 					break;
-				case "online-mode":
+				/*case "online-mode":
 					if (hasValue && NumberUtils.isBoolean(value))
 						onlineMode = Boolean.parseBoolean(value);
-					break;
+					break;*/
 				default:
 					break;
 				}
 			}
 		}
 
-		File workingDirectory = new File(workingDirPath);
 		workingDirectory.mkdirs();
-		
-		if (!acceptEula) {
-			if (!hasAcceptedEula()) {
-				LOGGER.error("You need to agree to the Mojang's EULA in order to run the server.");
-				System.exit(2);
-			}
+
+		if (!acceptEula && !hasAcceptedEula()) {
+			LOGGER.error("You need to agree to the Mojang's EULA in order to run the server.");
+			System.exit(2);
 		}
 
 		try {
-
 			// load server properties file
 			ServerProperties properties = new ServerProperties(new File(workingDirectory, serverPropertiesFile));
-			properties.setPort(port);
-			LOGGER.info("online mode: %b", onlineMode);
-			// properties.setOnlineMode(onlineMode);
+
+			if (ipAddress != null)
+				properties.setIpAddress(ipAddress);
+			if (port != -1)
+				properties.setPort(port);
 
 			// create and start Minecraft server
 			new MinecraftServer(workingDirectory, properties);
@@ -103,26 +103,39 @@ public class MinecraftServerLoader {
 	public static boolean hasAcceptedEula() {
 		boolean accepted = false;
 
-		File eulaFile = new File("eula.properties");
+		File eulaFile = new File(workingDirectory, "eula.properties");
+		Properties eulaProperties = new Properties();
+
 		if (!eulaFile.exists()) {
 			try {
 				LOGGER.info(
 						"Do you accept the Mojang's EULA (https://account.mojang.com/documents/minecraft_eula)? (y/n)");
-				if (((char) System.in.read()) == 'y') {
-					accepted = true;
-					eulaFile.createNewFile();
-					FileOutputStream fileOutputStream = new FileOutputStream(eulaFile);
-					fileOutputStream
-							.write("You have accepted to the Mojang's EULA: https://account.mojang.com/documents/minecraft_eula"
-									.getBytes(StandardCharsets.UTF_8));
-					fileOutputStream.close();
-				}
+				accepted = (((char) System.in.read()) == 'y');
 			} catch (IOException e) {
-				LOGGER.warn("You have accepted the Mojang's EULA but the file cannot be saved: %s",
-						e.getLocalizedMessage());
+				LOGGER.error("An error occurred while reading console input: %s", e.getLocalizedMessage());
 			}
-		} else
-			accepted = true;
+
+			try {
+				eulaFile.createNewFile();
+				FileOutputStream outStream = new FileOutputStream(eulaFile);
+				eulaProperties.setProperty("eula", String.valueOf(accepted));
+				eulaProperties.store(outStream,
+						"If you set eula to true, you agree to the Mojang's EULA (https://account.mojang.com/documents/minecraft_eula)");
+				outStream.close();
+			} catch (IOException e) {
+				LOGGER.error("Unable to save EULA file: %s", e.getLocalizedMessage());
+				LOGGER.info(
+						"You can create a file called \"eula.properties\" and put \"eula=true\" inside it to fix the error.");
+			}
+		} else {
+			try {
+				FileInputStream inStream = new FileInputStream(eulaFile);
+				eulaProperties.load(inStream);
+				accepted = Boolean.parseBoolean(eulaProperties.getProperty("eula"));
+			} catch (IOException e) {
+				LOGGER.error("Unable to load EULA file: %s", e.getLocalizedMessage());
+			}
+		}
 
 		return accepted;
 	}
