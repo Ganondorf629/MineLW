@@ -2,7 +2,7 @@ package net.sociuris.minelw.translation;
 
 import net.sociuris.minelw.text.TextComponentTranslation;
 
-public enum DefaultTranslation {
+public enum MinecraftTranslation {
 
 	ACHIEVEMENT_ACQUIRE_IRON("achievement.acquireIron"),
 	ACHIEVEMENT_ACQUIRE_IRON_DESC("achievement.acquireIron.desc"),
@@ -3043,7 +3043,7 @@ public enum DefaultTranslation {
 
 	private final String translationKey;
 
-	private DefaultTranslation(String translationKey) {
+	private MinecraftTranslation(String translationKey) {
 		this.translationKey = translationKey;
 	}
 
