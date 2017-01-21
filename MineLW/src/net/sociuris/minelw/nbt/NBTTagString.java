@@ -4,7 +4,9 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class NBTTagString extends NBTBase {
+import net.sociuris.util.StringUtils;
+
+public class NBTTagString extends NBTElement {
 
 	private String data;
 
@@ -30,13 +32,18 @@ public class NBTTagString extends NBTBase {
 	}
 
 	@Override
-	public String toString() {
-		return "\"" + this.data.replace("\"", "\\\"") + "\"";
+	public String getData() {
+		return data;
 	}
 
 	@Override
 	public byte getID() {
 		return 8;
+	}
+
+	@Override
+	public String toString() {
+		return "\"" + StringUtils.escape(data, '"') + "\"";
 	}
 
 }

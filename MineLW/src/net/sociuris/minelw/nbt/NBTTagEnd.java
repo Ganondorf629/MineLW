@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class NBTTagEnd extends NBTBase {
+public class NBTTagEnd extends NBTElement {
 
 	@Override
 	public void readData(DataInput in) throws IOException {
@@ -15,13 +15,18 @@ public class NBTTagEnd extends NBTBase {
 	}
 
 	@Override
-	public String toString() {
-		return "END";
+	public String getData() {
+		return this.toString();
 	}
 
 	@Override
 	public byte getID() {
 		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return "END";
 	}
 
 }

@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class NBTTagDouble extends NBTBase {
+public class NBTTagDouble extends NBTPrimitive {
 
 	private double data;
 
@@ -26,13 +26,18 @@ public class NBTTagDouble extends NBTBase {
 	}
 
 	@Override
-	public String toString() {
-		return String.valueOf(data) + "d";
+	public Double getData() {
+		return data;
 	}
 
 	@Override
 	public byte getID() {
 		return 6;
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(data) + "d";
 	}
 
 }

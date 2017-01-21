@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class NBTTagLong extends NBTBase {
+public class NBTTagLong extends NBTPrimitive {
 
 	private long data;
 
@@ -26,13 +26,18 @@ public class NBTTagLong extends NBTBase {
 	}
 
 	@Override
-	public String toString() {
-		return String.valueOf(data) + "l";
+	public Long getData() {
+		return data;
 	}
 
 	@Override
 	public byte getID() {
 		return 4;
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(data) + "l";
 	}
 
 }

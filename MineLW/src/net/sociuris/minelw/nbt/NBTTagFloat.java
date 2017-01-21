@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class NBTTagFloat extends NBTBase {
+public class NBTTagFloat extends NBTPrimitive {
 
 	private float data;
 
@@ -26,13 +26,18 @@ public class NBTTagFloat extends NBTBase {
 	}
 
 	@Override
-	public String toString() {
-		return String.valueOf(data) + "f";
+	public Float getData() {
+		return data;
 	}
 
 	@Override
 	public byte getID() {
 		return 5;
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(data) + "f";
 	}
 
 }

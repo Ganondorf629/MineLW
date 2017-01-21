@@ -1,17 +1,19 @@
 package net.sociuris.minelw.nbt;
 
-abstract class NBTPrimitive extends NBTBase {
+public abstract class NBTPrimitive extends NBTElement {
 
-	public abstract long getLong();
-
-	public abstract int getInt();
-
-	public abstract short getShort();
-
-	public abstract byte getByte();
-
-	public abstract double getDouble();
-
-	public abstract float getFloat();
+	/*
+	 * public abstract long longValue();
+	 * 
+	 * public abstract long intValue();
+	 * 
+	 * public abstract long shortValue();
+	 * 
+	 * public abstract long byteValue();
+	 * 
+	 * public abstract long doubleValue();
+	 * 
+	 * public abstract long floatValue();
+	 */
 
 }

@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class NBTTagByte extends NBTBase {
+public class NBTTagByte extends NBTPrimitive {
 
 	private byte data;
 
@@ -24,15 +24,20 @@ public class NBTTagByte extends NBTBase {
 	public void writeData(DataOutput out) throws IOException {
 		out.writeByte(data);
 	}
-
+	
 	@Override
-	public String toString() {
-		return String.valueOf(this.data) + "b";
+	public Byte getData() {
+		return data;
 	}
 
 	@Override
 	public byte getID() {
 		return 1;
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(this.data) + "b";
 	}
 
 }

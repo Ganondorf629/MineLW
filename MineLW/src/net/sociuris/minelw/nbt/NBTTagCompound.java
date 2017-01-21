@@ -4,27 +4,24 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import net.sociuris.logger.Logger;
+public class NBTTagCompound extends NBTElement {
 
-public class NBTTagCompound extends NBTBase {
-
-	private final Logger logger = Logger.getLogger();
-	private final Map<String, NBTBase> tagMap = new HashMap<String, NBTBase>();
+	private final Map<String, NBTElement> members = new HashMap<String, NBTElement>();
 
 	@Override
 	public void readData(DataInput in) throws IOException {
-		this.tagMap.clear();
+		this.members.clear();
 		byte b;
-
 		while ((b = in.readByte()) != 0) {
 			String str = in.readUTF();
-			NBTBase nbtBase = NBTUtils.getNbtFromID(b);
-			nbtBase.readData(in);
-			if (this.tagMap.put(str, nbtBase) != null) {
+			NBTElement NBTElement = NBTUtils.getNBTFromID(b);
+			NBTElement.readData(in);
+			if (this.members.put(str, NBTElement) != null) {
 
 			}
 		}
@@ -32,30 +29,214 @@ public class NBTTagCompound extends NBTBase {
 
 	@Override
 	public void writeData(DataOutput out) throws IOException {
-		for (Entry<String, NBTBase> mapEntry : this.tagMap.entrySet()) {
-			NBTBase nbtBase = mapEntry.getValue();
-			out.writeByte(nbtBase.getID());
+		for (Entry<String, NBTElement> mapEntry : this.members.entrySet()) {
+			NBTElement NBTElement = mapEntry.getValue();
+			out.writeByte(NBTElement.getID());
 
-			if (nbtBase.getID() != 0) {
+			if (NBTElement.getID() != 0) {
 				out.writeUTF(mapEntry.getKey());
-				nbtBase.writeData(out);
+				NBTElement.writeData(out);
 			}
 		}
-
 		out.writeByte(0);
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder stringBuilder = new StringBuilder("{");
-		int i = 0;
-		for (Entry<String, NBTBase> entry : tagMap.entrySet()) {
-			stringBuilder.append(entry.getKey()).append(';').append(entry.getValue().toString());
-			if (i != tagMap.size() - 1)
-				stringBuilder.append(',');
-			i++;
+	public boolean hasTag(String key) {
+		return members.containsKey(key);
+	}
+
+	public void setTag(String key, NBTElement NBTElement) {
+		this.members.put(key, NBTElement);
+	}
+
+	public NBTElement getTag(String key) {
+		return members.get(key);
+	}
+
+	public boolean hasPrimitiveTag(String key) {
+		if (hasTag(key)) {
+			return (getTag(key) instanceof NBTPrimitive);
+		} else
+			return false;
+	}
+
+	// byte
+	public boolean hasByte(String key) {
+		return (hasTag(key) && getTag(key).isByte());
+	}
+
+	public void setByte(String key, byte value) {
+		setTag(key, new NBTTagByte(value));
+	}
+
+	public NBTTagByte getByte(String key) {
+		return getTag(key).getAsByte();
+	}
+
+	// short
+	public boolean hasShort(String key) {
+		return (hasTag(key) && getTag(key).isShort());
+	}
+
+	public void setShort(String key, short value) {
+		setTag(key, new NBTTagShort(value));
+	}
+
+	public NBTTagShort getShort(String key) {
+		return getTag(key).getAsShort();
+	}
+
+	// int
+	public boolean hasInt(String key) {
+		return (hasTag(key) && getTag(key).isInt());
+	}
+
+	public void setInt(String key, int value) {
+		setTag(key, new NBTTagInt(value));
+	}
+
+	public NBTTagInt getInt(String key) {
+		return getTag(key).getAsInt();
+	}
+
+	// long
+	public boolean hasLong(String key) {
+		return (hasTag(key) && getTag(key).isLong());
+	}
+
+	public void setLong(String key, long value) {
+		setTag(key, new NBTTagLong(value));
+	}
+
+	public NBTTagLong getLong(String key) {
+		return getTag(key).getAsLong();
+	}
+
+	// float
+	public boolean hasFloat(String key) {
+		return (hasTag(key) && getTag(key).isFloat());
+	}
+
+	public void setFloat(String key, float value) {
+		setTag(key, new NBTTagFloat(value));
+	}
+
+	public NBTTagFloat getFloat(String key) {
+		return getTag(key).getAsFloat();
+	}
+
+	// double
+	public boolean hasDouble(String key) {
+		return (hasTag(key) && getTag(key).isDouble());
+	}
+
+	public void setDouble(String key, double value) {
+		setTag(key, new NBTTagDouble(value));
+	}
+
+	public NBTTagDouble getDouble(String key) {
+		return getTag(key).getAsDouble();
+	}
+
+	// byte array
+	public boolean hasByteArray(String key) {
+		return (hasTag(key) && getTag(key).isByteArray());
+	}
+
+	public void setByteArray(String key, byte[] value) {
+		setTag(key, new NBTTagByteArray(value));
+	}
+
+	public NBTTagByteArray getByteArray(String key) {
+		return getTag(key).getAsByteArray();
+	}
+
+	// string
+	public boolean hasString(String key) {
+		return (hasTag(key) && getTag(key).isString());
+	}
+
+	public void setString(String key, String value) {
+		setTag(key, new NBTTagString(value));
+	}
+
+	public NBTTagString getString(String key) {
+		return getTag(key).getAsString();
+	}
+
+	// list
+	public boolean hasList(String key) {
+		return (hasTag(key) && getTag(key).isList());
+	}
+
+	public void setList(String key, List<NBTElement> nbtElements) {
+		setTag(key, new NBTTagList(nbtElements));
+	}
+
+	public NBTTagList getList(String key) {
+		return getTag(key).getAsList();
+	}
+
+	// compound
+	public boolean hasCompound(String key) {
+		return (hasTag(key) && getTag(key).isCompound());
+	}
+
+	public void setCompound(String key, NBTTagCompound value) {
+		setTag(key, value);
+	}
+
+	public NBTTagCompound getCompound(String key) {
+		return getTag(key).getAsCompound();
+	}
+
+	// int array
+	public boolean hasIntArray(String key) {
+		return (hasTag(key) && getTag(key).isIntArray());
+	}
+
+	public void setIntArray(String key, int[] value) {
+		setTag(key, new NBTTagIntArray(value));
+	}
+
+	public NBTTagIntArray getIntArray(String key) {
+		return getTag(key).getAsIntArray();
+	}
+
+	// boolean
+	public boolean hasBoolean(String key) {
+		NBTTagByte nbtTagByte = getByte(key);
+		if (nbtTagByte != null) {
+			byte b = nbtTagByte.getData();
+			return (b == 0 || b == 1);
 		}
-		return stringBuilder.append('}').toString();
+		return false;
+	}
+
+	public void setBoolean(String key, boolean value) {
+		setByte(key, ((byte) (value ? 1 : 0)));
+	}
+
+	public boolean getBoolean(String key) {
+		return (getByte(key).getData() == 1);
+	}
+
+	public boolean hasUniqueId(String key) {
+		return (hasLong(key + "Most") && hasLong(key + "Least"));
+	}
+
+	public void setUniqueId(String key, UUID value) {
+		setLong(key + "Most", value.getMostSignificantBits());
+		setLong(key + "Least", value.getLeastSignificantBits());
+	}
+
+	public UUID getUniqueId(String key) {
+		return new UUID(getLong(key + "Most").getData(), getLong(key + "Least").getData());
+	}
+
+	@Override
+	public Map<String, NBTElement> getData() {
+		return members;
 	}
 
 	@Override
@@ -63,232 +244,17 @@ public class NBTTagCompound extends NBTBase {
 		return 10;
 	}
 
-	public void setTag(String key, NBTBase value) {
-		this.tagMap.put(key, value);
-	}
-
-	public void setByte(String key, byte value) {
-		this.tagMap.put(key, new NBTTagByte(value));
-	}
-
-	public void setShort(String key, short value) {
-		this.tagMap.put(key, new NBTTagShort(value));
-	}
-
-	public void setInteger(String key, int value) {
-		this.tagMap.put(key, new NBTTagInt(value));
-	}
-
-	public void setLong(String key, long value) {
-		this.tagMap.put(key, new NBTTagLong(value));
-	}
-
-	public void setUniqueId(String key, UUID value) {
-		this.setLong(key + "Most", value.getMostSignificantBits());
-		this.setLong(key + "Least", value.getLeastSignificantBits());
-	}
-
-	public UUID getUniqueId(String key) {
-		return new UUID(this.getLong(key + "Most"), this.getLong(key + "Least"));
-	}
-
-	public boolean hasUniqueId(String key) {
-		return this.hasKey(key + "Most", 99) && this.hasKey(key + "Least", 99);
-	}
-
-	public void setFloat(String key, float value) {
-		this.tagMap.put(key, new NBTTagFloat(value));
-	}
-
-	public void setDouble(String key, double value) {
-		this.tagMap.put(key, new NBTTagDouble(value));
-	}
-
-	public void setString(String key, String value) {
-		this.tagMap.put(key, new NBTTagString(value));
-	}
-
-	public void setByteArray(String key, byte[] value) {
-		this.tagMap.put(key, new NBTTagByteArray(value));
-	}
-
-	public void setIntArray(String key, int[] value) {
-		this.tagMap.put(key, new NBTTagIntArray(value));
-	}
-
-	public void setBoolean(String key, boolean value) {
-		this.setByte(key, (byte) (value ? 1 : 0));
-	}
-
-	public NBTBase getTag(String key) {
-		return this.tagMap.get(key);
-	}
-
-	public byte getTagId(String key) {
-		NBTBase nbtbase = this.tagMap.get(key);
-		return nbtbase == null ? 0 : nbtbase.getID();
-	}
-
-	public boolean hasKey(String key) {
-		return this.tagMap.containsKey(key);
-	}
-
-	public boolean hasKey(String key, int type) {
-		int i = this.getTagId(key);
-		return i == type ? true : (type != 99 ? false : i == 1 || i == 2 || i == 3 || i == 4 || i == 5 || i == 6);
-	}
-
-	public byte getByte(String key) {
-		try {
-			if (this.hasKey(key, 99)) {
-				return ((NBTPrimitive) this.tagMap.get(key)).getByte();
-			}
-		} catch (ClassCastException e) {
-			;
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder("{");
+		int i = 0;
+		for (Entry<String, NBTElement> entry : members.entrySet()) {
+			stringBuilder.append(entry.getKey()).append(';').append(entry.getValue().toString());
+			if (i != members.size() - 1)
+				stringBuilder.append(',');
+			i++;
 		}
-
-		return (byte) 0;
-	}
-
-	public short getShort(String key) {
-		try {
-			if (this.hasKey(key, 99)) {
-				return ((NBTPrimitive) this.tagMap.get(key)).getShort();
-			}
-		} catch (ClassCastException e) {
-			;
-		}
-
-		return (short) 0;
-	}
-
-	public int getInteger(String key) {
-		try {
-			if (this.hasKey(key, 99)) {
-				return ((NBTPrimitive) this.tagMap.get(key)).getInt();
-			}
-		} catch (ClassCastException e) {
-			;
-		}
-
-		return 0;
-	}
-
-	public long getLong(String key) {
-		try {
-			if (this.hasKey(key, 99)) {
-				return ((NBTPrimitive) this.tagMap.get(key)).getLong();
-			}
-		} catch (ClassCastException e) {
-			;
-		}
-
-		return 0L;
-	}
-
-	public float getFloat(String key) {
-		try {
-			if (this.hasKey(key, 99)) {
-				return ((NBTPrimitive) this.tagMap.get(key)).getFloat();
-			}
-		} catch (ClassCastException e) {
-			;
-		}
-
-		return 0.0F;
-	}
-
-	public double getDouble(String key) {
-		try {
-			if (this.hasKey(key, 99)) {
-				return ((NBTPrimitive) this.tagMap.get(key)).getDouble();
-			}
-		} catch (ClassCastException e) {
-			;
-		}
-
-		return 0.0D;
-	}
-
-	public String getString(String key) {
-		try {
-			if (this.hasKey(key, 8)) {
-				return this.tagMap.get(key).toString();
-			}
-		} catch (ClassCastException e) {
-			;
-		}
-
-		return "";
-	}
-
-	public byte[] getByteArray(String key) {
-		try {
-			if (this.hasKey(key, 7)) {
-				return ((NBTTagByteArray) this.tagMap.get(key)).getByteArray();
-			}
-		} catch (ClassCastException e) {
-			logger.printStackTrace(e);
-			System.exit(1);
-		}
-
-		return new byte[0];
-	}
-
-	public int[] getIntArray(String key) {
-		try {
-			if (this.hasKey(key, 11)) {
-				return ((NBTTagIntArray) this.tagMap.get(key)).getIntArray();
-			}
-		} catch (ClassCastException e) {
-			logger.printStackTrace(e);
-			System.exit(1);
-		}
-
-		return new int[0];
-	}
-
-	public NBTTagCompound getCompoundTag(String key) {
-		try {
-			if (this.hasKey(key, 10)) {
-				return (NBTTagCompound) this.tagMap.get(key);
-			}
-		} catch (ClassCastException e) {
-			logger.printStackTrace(e);
-			System.exit(1);
-		}
-
-		return new NBTTagCompound();
-	}
-
-	/**
-	 * Gets the NBTTagList object with the given name.
-	 */
-	public NBTTagList getTagList(String key, int type) {
-		try {
-			if (this.getTagId(key) == 9) {
-				NBTTagList nbtTagList = (NBTTagList) this.tagMap.get(key);
-
-				if (!nbtTagList.hasNoTags() && nbtTagList.getTagType() != type) {
-					return new NBTTagList();
-				}
-
-				return nbtTagList;
-			}
-		} catch (ClassCastException e) {
-			logger.printStackTrace(e);
-			System.exit(1);
-		}
-
-		return new NBTTagList();
-	}
-
-	/**
-	 * Retrieves a boolean value using the specified key, or false if no such
-	 * key was stored. This uses the getByte method.
-	 */
-	public boolean getBoolean(String key) {
-		return this.getByte(key) != 0;
+		return stringBuilder.append('}').toString();
 	}
 
 }

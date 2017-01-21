@@ -1,14 +1,18 @@
 package net.sociuris.minelw.nbt;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import net.sociuris.minelw.crash.CrashReport;
-import net.sociuris.minelw.nbt.exception.NBTFormatException;
 
 public class NBTUtils {
 
-	public static NBTBase getNbtFromID(byte id) {
+	public static NBTElement getNBTFromID(byte id) {
 		switch (id) {
 		case 0:
 			return new NBTTagEnd();
@@ -51,21 +55,45 @@ public class NBTUtils {
 		}
 	}
 
-	public static NBTTagCompound readNBTCompound(DataInputStream in) throws NBTFormatException, IOException {
-		NBTBase nbtBase = NBTUtils.readNBT(in);
+	public static NBTTagCompound readCompressed(InputStream in) throws IOException {
+		DataInputStream dataInputStream = new DataInputStream(new GZIPInputStream(in));
+		NBTTagCompound nbtTagCompound;
+		try {
+			nbtTagCompound = NBTUtils.readNBTCompound(dataInputStream);
+		} finally {
+			dataInputStream.close();
+		}
+		return nbtTagCompound;
+	}
+
+	public static void writeCompressed(NBTTagCompound compound, OutputStream out) throws IOException {
+		DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(out));
+		try {
+			writeNBTCompound(compound, dataOutputStream);
+		} finally {
+			dataOutputStream.close();
+		}
+	}
+
+	public static NBTTagCompound readNBTCompound(DataInputStream in) throws IOException {
+		NBTElement nbtBase = NBTUtils.read(in);
 		if (nbtBase instanceof NBTTagCompound)
 			return (NBTTagCompound) nbtBase;
 		else
-			throw new NBTFormatException("Root tag must be a named compound tag");
+			throw new IOException("Root tag must be a named compound tag");
+	}
+	
+	public static void writeNBTCompound(NBTTagCompound compound, DataOutputStream out) throws IOException {
+		write(compound, out);
 	}
 
-	public static NBTBase readNBT(DataInputStream in) throws IOException {
+	public static NBTElement read(DataInputStream in) throws IOException {
 		byte nbtTagID = in.readByte();
 		if (nbtTagID == 0)
 			return new NBTTagEnd();
 		else {
 			in.readUTF();
-			NBTBase nbt = NBTUtils.getNbtFromID(nbtTagID);
+			NBTElement nbt = NBTUtils.getNBTFromID(nbtTagID);
 			try {
 				nbt.readData(in);
 				return nbt;
@@ -75,5 +103,14 @@ public class NBTUtils {
 		}
 		return null;
 	}
+	
+	public static void write(NBTElement tag, DataOutputStream out) throws IOException {
+		out.writeByte(tag.getID());
+		if(tag.getID() != 0) {
+			out.writeUTF("");
+			tag.writeData(out);
+		}
+	}
+	
 
 }

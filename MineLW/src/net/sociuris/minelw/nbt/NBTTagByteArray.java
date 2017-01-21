@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class NBTTagByteArray extends NBTBase {
+public class NBTTagByteArray extends NBTElement {
 
 	private byte[] data;
 
@@ -28,6 +28,16 @@ public class NBTTagByteArray extends NBTBase {
 	}
 
 	@Override
+	public byte[] getData() {
+		return data;
+	}
+
+	@Override
+	public byte getID() {
+		return 7;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder('[');
 		for (int i = 0; i < data.length; i++) {
@@ -36,15 +46,6 @@ public class NBTTagByteArray extends NBTBase {
 				builder.append(',');
 		}
 		return builder.append(']').toString();
-	}
-
-	@Override
-	public byte getID() {
-		return 7;
-	}
-
-	public byte[] getByteArray() {
-		return this.data;
 	}
 
 }
