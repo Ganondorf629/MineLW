@@ -3,7 +3,6 @@ package net.sociuris.minelw.network.packet;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -27,13 +26,9 @@ public class PacketOutputStream extends DataOutputStream {
 	}
 
 	public void writeString(String s) throws IOException {
-		this.writeString(s, StandardCharsets.UTF_8);
-	}
-
-	public void writeString(String s, Charset c) throws IOException {
-		byte[] byteArray = s.getBytes(c);
-		this.writeVarInt(byteArray.length);
-		this.write(byteArray, 0, byteArray.length);
+		byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+		this.writeVarInt(bytes.length);
+		this.write(bytes);
 	}
 
 	public void writeVarInt(int i) throws IOException {

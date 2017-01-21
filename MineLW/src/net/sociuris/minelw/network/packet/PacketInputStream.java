@@ -3,7 +3,6 @@ package net.sociuris.minelw.network.packet;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -17,16 +16,10 @@ public class PacketInputStream extends DataInputStream {
 	}
 
 	public String readString() throws IOException {
-		return readString(StandardCharsets.UTF_8);
-	}
-
-	public String readString(Charset charset) throws IOException {
 		int length = readVarInt();
-		byte[] byteArray = new byte[length];
-		for (int i = 0; i < length; i++) {
-			byteArray[i] = this.readByte();
-		}
-		return new String(byteArray, charset);
+		byte[] bytes = new byte[length];
+		this.read(bytes);
+		return new String(bytes, StandardCharsets.UTF_8);
 	}
 
 	public int readVarInt() throws IOException {
