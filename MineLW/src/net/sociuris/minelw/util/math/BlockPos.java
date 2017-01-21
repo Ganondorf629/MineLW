@@ -48,6 +48,6 @@ public class BlockPos extends Vector3i {
 
 	@Override
 	public String toString() {
-		return "BlockPos(x=" + this.getX() + ",y=" + this.getY() + ",z=" + this.getZ() + ")";
+		return "BlockPos[x=" + this.getX() + ",y=" + this.getY() + ",z=" + this.getZ() + "]";
 	}
 }
