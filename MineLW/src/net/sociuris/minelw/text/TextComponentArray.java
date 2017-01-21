@@ -52,7 +52,7 @@ public class TextComponentArray implements Iterable<TextComponent> {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(this);
+		return "TextComponentArray" + StringUtils.listToString(textComponentList);
 	}
 
 	public String toPrintableMessage() {
