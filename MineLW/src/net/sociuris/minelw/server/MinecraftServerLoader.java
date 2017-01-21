@@ -6,8 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import net.sociuris.crash.CrashReport;
 import net.sociuris.logger.Logger;
+import net.sociuris.minelw.crash.CrashReport;
 import net.sociuris.util.NumberUtils;
 
 public class MinecraftServerLoader {
@@ -96,7 +96,7 @@ public class MinecraftServerLoader {
 			// create and start Minecraft server
 			new MinecraftServer(workingDirectory, properties);
 		} catch (Throwable throwable) {
-			CrashReport.makeCrashReport("Unable to start Minecraft server", throwable, 4);
+			CrashReport.makeCrashReport("An error occurred during initialization of Minecraft server", throwable, 3);
 		}
 	}
 
