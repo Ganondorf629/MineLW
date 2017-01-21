@@ -3,8 +3,8 @@ package net.sociuris.minelw.tick;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sociuris.crash.CrashReport;
 import net.sociuris.logger.Logger;
+import net.sociuris.minelw.crash.CrashReport;
 import net.sociuris.minelw.server.MinecraftServer;
 
 public class TickManager {
@@ -49,7 +49,7 @@ public class TickManager {
 						Thread.sleep(sleepTime);
 					}
 				} catch (Exception e) {
-					CrashReport.makeCrashReport("Exception in server tick loop", e, 6);
+					CrashReport.makeCrashReport("Exception in server tick loop", e, 5);
 				}
 			}
 		}.start();
