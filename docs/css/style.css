@@ -82,8 +82,9 @@ section > h2 {
 }
 
 section > p {
-	text-indent: 15px;
 	font-size: 1em;
+	text-indent: 15px;
+	margin-left: 15px;
 }
 
 div.loader {
