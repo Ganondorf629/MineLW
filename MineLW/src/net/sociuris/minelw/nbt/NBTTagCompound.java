@@ -69,8 +69,8 @@ public class NBTTagCompound extends NBTElement {
 		setTag(key, new NBTTagByte(value));
 	}
 
-	public NBTTagByte getByte(String key) {
-		return getTag(key).getAsByte();
+	public byte getByte(String key) {
+		return getTag(key).getAsByte().getData();
 	}
 
 	// short
@@ -82,8 +82,8 @@ public class NBTTagCompound extends NBTElement {
 		setTag(key, new NBTTagShort(value));
 	}
 
-	public NBTTagShort getShort(String key) {
-		return getTag(key).getAsShort();
+	public short getShort(String key) {
+		return getTag(key).getAsShort().getData();
 	}
 
 	// int
@@ -95,8 +95,8 @@ public class NBTTagCompound extends NBTElement {
 		setTag(key, new NBTTagInt(value));
 	}
 
-	public NBTTagInt getInt(String key) {
-		return getTag(key).getAsInt();
+	public int getInt(String key) {
+		return getTag(key).getAsInt().getData();
 	}
 
 	// long
@@ -108,8 +108,8 @@ public class NBTTagCompound extends NBTElement {
 		setTag(key, new NBTTagLong(value));
 	}
 
-	public NBTTagLong getLong(String key) {
-		return getTag(key).getAsLong();
+	public long getLong(String key) {
+		return getTag(key).getAsLong().getData();
 	}
 
 	// float
@@ -121,8 +121,8 @@ public class NBTTagCompound extends NBTElement {
 		setTag(key, new NBTTagFloat(value));
 	}
 
-	public NBTTagFloat getFloat(String key) {
-		return getTag(key).getAsFloat();
+	public float getFloat(String key) {
+		return getTag(key).getAsFloat().getData();
 	}
 
 	// double
@@ -134,8 +134,8 @@ public class NBTTagCompound extends NBTElement {
 		setTag(key, new NBTTagDouble(value));
 	}
 
-	public NBTTagDouble getDouble(String key) {
-		return getTag(key).getAsDouble();
+	public double getDouble(String key) {
+		return getTag(key).getAsDouble().getData();
 	}
 
 	// byte array
@@ -160,8 +160,8 @@ public class NBTTagCompound extends NBTElement {
 		setTag(key, new NBTTagString(value));
 	}
 
-	public NBTTagString getString(String key) {
-		return getTag(key).getAsString();
+	public String getString(String key) {
+		return getTag(key).getAsString().getData();
 	}
 
 	// list
@@ -205,12 +205,7 @@ public class NBTTagCompound extends NBTElement {
 
 	// boolean
 	public boolean hasBoolean(String key) {
-		NBTTagByte nbtTagByte = getByte(key);
-		if (nbtTagByte != null) {
-			byte b = nbtTagByte.getData();
-			return (b == 0 || b == 1);
-		}
-		return false;
+		return hasByte(key);
 	}
 
 	public void setBoolean(String key, boolean value) {
@@ -218,7 +213,7 @@ public class NBTTagCompound extends NBTElement {
 	}
 
 	public boolean getBoolean(String key) {
-		return (getByte(key).getData() == 1);
+		return (getByte(key) == 1);
 	}
 
 	public boolean hasUniqueId(String key) {
@@ -231,7 +226,7 @@ public class NBTTagCompound extends NBTElement {
 	}
 
 	public UUID getUniqueId(String key) {
-		return new UUID(getLong(key + "Most").getData(), getLong(key + "Least").getData());
+		return new UUID(getLong(key + "Most"), getLong(key + "Least"));
 	}
 
 	@Override
